@@ -3,43 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anglais Ultimate - Coaching Perso</title>
+    <title>Anglais Pro - Top 100</title>
     <style>
         :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; --warning: #f59e0b; --danger: #ef4444; --success: #22c55e; --fav: #ec4899; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; justify-content: center; }
         .app-container { width: 100%; max-width: 550px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; margin-top: 10px; }
-        
         .tabs { display: flex; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; }
         .tab { flex: 1; padding: 15px; border: none; background: none; cursor: pointer; font-weight: bold; color: #64748b; }
         .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: white; }
-
         .content { padding: 20px; display: none; }
         .content.active { display: block; }
-
         .stats { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold; font-size: 0.8rem; }
         .verb-card { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: center; border: 1px solid #e2e8f0; }
-        
-        /* Contrôles Quiz */
         .quiz-modes { display: flex; gap: 5px; margin-bottom: 15px; }
         .mode-btn { flex: 1; font-size: 0.7rem; padding: 8px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; background: white; font-weight: bold; }
         .mode-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-
         input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-size: 1rem; }
         .btn-check { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
-        
-        /* Révision */
         .controls-area { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
         .search-bar { padding: 10px; border-radius: 8px; border: 1px solid #ddd; width: 100%; box-sizing: border-box; }
-        .action-btns { display: flex; gap: 5px; }
-        .btn-act { flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 0.75rem; color: white; }
-        
+        .action-btns { display: flex; gap: 5px; flex-wrap: wrap; }
+        .btn-act { flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 0.75rem; color: white; min-width: 100px; }
         .list-container { max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; }
         .verb-item { display: grid; grid-template-columns: 30px 1fr 2fr 40px; padding: 10px; border-bottom: 1px solid #f1f5f9; align-items: center; font-size: 0.85rem; }
         .hard-verb { background: #fffbeb !important; }
         .fav-verb { border-left: 4px solid var(--fav); }
-        .btn-fav { background: none; border: none; cursor: pointer; font-size: 1.1rem; filter: grayscale(1); }
+        .btn-fav { background: none; border: none; cursor: pointer; font-size: 1.1rem; filter: grayscale(1); transition: 0.2s; }
         .btn-fav.is-fav { filter: grayscale(0); }
-        
+        .audio-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; }
         #feedback { margin-top: 10px; text-align: center; font-weight: bold; min-height: 40px; }
     </style>
 </head>
@@ -55,7 +46,7 @@
         <div class="quiz-modes">
             <button class="mode-btn active" onclick="setQuizMode('all', this)">Tous</button>
             <button class="mode-btn" onclick="setQuizMode('hard', this)">⚠️ Erreurs</button>
-            <button class="mode-btn" onclick="setQuizMode('fav', this)">⭐ Ma Liste</button>
+            <button class="mode-btn" onclick="setQuizMode('fav', this)">⭐ Favoris</button>
         </div>
         <div class="stats">
             <span>Score: <span id="score">0</span></span>
@@ -73,7 +64,7 @@
 
     <div id="revision" class="content">
         <div class="controls-area">
-            <input type="text" id="search" class="search-bar" placeholder="Chercher..." onkeyup="renderRevision()">
+            <input type="text" id="search" class="search-bar" placeholder="Chercher un verbe..." onkeyup="renderRevision()">
             <div class="action-btns">
                 <button class="btn-act" style="background: var(--warning)" onclick="toggleShowHard()">Priorités ⚠️</button>
                 <button class="btn-act" style="background: var(--primary)" onclick="playFullList()">Lecture Audio 🔊</button>
@@ -86,15 +77,52 @@
 
 <script>
     const verbes = [
-        { fr: "Être", inf: "be", pre: "was", par: "been" }, { fr: "Avoir", inf: "have", pre: "had", par: "had" },
-        { fr: "Faire", inf: "do", pre: "did", par: "done" }, { fr: "Dire", inf: "say", pre: "said", par: "said" },
-        { fr: "Aller", inf: "go", pre: "went", par: "gone" }, { fr: "Voir", inf: "see", pre: "saw", par: "seen" },
-        { fr: "Venir", inf: "come", pre: "came", par: "come" }, { fr: "Prendre", inf: "take", pre: "took", par: "taken" },
-        { fr: "Trouver", inf: "find", pre: "found", par: "found" }, { fr: "Donner", inf: "give", pre: "gave", par: "given" },
-        { fr: "Manger", inf: "eat", pre: "ate", par: "eaten" }, { fr: "Boire", inf: "drink", pre: "drank", par: "drunk" },
-        { fr: "Écrire", inf: "write", pre: "wrote", par: "written" }, { fr: "Acheter", inf: "buy", pre: "bought", par: "bought" },
-        { fr: "Savoir", inf: "know", pre: "knew", par: "known" }, { fr: "Penser", inf: "think", pre: "thought", par: "thought" }
-        // ... Ajoute ici les autres verbes si besoin
+        { fr: "Être", inf: "be", pre: "was", par: "been" }, { fr: "Porter", inf: "bear", pre: "bore", par: "borne" },
+        { fr: "Battre", inf: "beat", pre: "beat", par: "beaten" }, { fr: "Devenir", inf: "become", pre: "became", par: "become" },
+        { fr: "Commencer", inf: "begin", pre: "began", par: "begun" }, { fr: "Parier", inf: "bet", pre: "bet", par: "bet" },
+        { fr: "Mordre", inf: "bite", pre: "bit", par: "bitten" }, { fr: "Saigner", inf: "bleed", pre: "bled", par: "bled" },
+        { fr: "Souffler", inf: "blow", pre: "blew", par: "blown" }, { fr: "Casser", inf: "break", pre: "broke", par: "broken" },
+        { fr: "Apporter", inf: "bring", pre: "brought", par: "brought" }, { fr: "Construire", inf: "build", pre: "built", par: "built" },
+        { fr: "Brûler", inf: "burn", pre: "burnt", par: "burnt" }, { fr: "Acheter", inf: "buy", pre: "bought", par: "bought" },
+        { fr: "Attraper", inf: "catch", pre: "caught", par: "caught" }, { fr: "Choisir", inf: "choose", pre: "chose", par: "chosen" },
+        { fr: "Venir", inf: "come", pre: "came", par: "come" }, { fr: "Coûter", inf: "cost", pre: "cost", par: "cost" },
+        { fr: "Couper", inf: "cut", pre: "cut", par: "cut" }, { fr: "Faire", inf: "do", pre: "did", par: "done" },
+        { fr: "Dessiner", inf: "draw", pre: "drew", par: "drawn" }, { fr: "Rêver", inf: "dream", pre: "dreamt", par: "dreamt" },
+        { fr: "Boire", inf: "drink", pre: "drank", par: "drunk" }, { fr: "Conduire", inf: "drive", pre: "drove", par: "driven" },
+        { fr: "Manger", inf: "eat", pre: "ate", par: "eaten" }, { fr: "Tomber", inf: "fall", pre: "fell", par: "fallen" },
+        { fr: "Nourrir", inf: "feed", pre: "fed", par: "fed" }, { fr: "Ressentir", inf: "feel", pre: "felt", par: "felt" },
+        { fr: "Se battre", inf: "fight", pre: "fought", par: "fought" }, { fr: "Trouver", inf: "find", pre: "found", par: "found" },
+        { fr: "Voler (air)", inf: "fly", pre: "flew", par: "flown" }, { fr: "Oublier", inf: "forget", pre: "forgot", par: "forgotten" },
+        { fr: "Pardonner", inf: "forgive", pre: "forgave", par: "forgiven" }, { fr: "Geler", inf: "freeze", pre: "froze", par: "frozen" },
+        { fr: "Obtenir", inf: "get", pre: "got", par: "got" }, { fr: "Donner", inf: "give", pre: "gave", par: "given" },
+        { fr: "Aller", inf: "go", pre: "went", par: "gone" }, { fr: "Grandir", inf: "grow", pre: "grew", par: "grown" },
+        { fr: "Accrocher", inf: "hang", pre: "hung", par: "hung" }, { fr: "Avoir", inf: "have", pre: "had", par: "had" },
+        { fr: "Entendre", inf: "hear", pre: "heard", par: "heard" }, { fr: "Cacher", inf: "hide", pre: "hid", par: "hidden" },
+        { fr: "Frapper", inf: "hit", pre: "hit", par: "hit" }, { fr: "Tenir", inf: "hold", pre: "held", par: "held" },
+        { fr: "Blesser", inf: "hurt", pre: "hurt", par: "hurt" }, { fr: "Garder", inf: "keep", pre: "kept", par: "kept" },
+        { fr: "Savoir", inf: "know", pre: "knew", par: "known" }, { fr: "Poser", inf: "lay", pre: "laid", par: "laid" },
+        { fr: "Mener", inf: "lead", pre: "led", par: "led" }, { fr: "Apprendre", inf: "learn", pre: "learnt", par: "learnt" },
+        { fr: "Quitter", inf: "leave", pre: "left", par: "left" }, { fr: "Prêter", inf: "lend", pre: "lent", par: "lent" },
+        { fr: "Laisser", inf: "let", pre: "let", par: "let" }, { fr: "Perdre", inf: "lose", pre: "lost", par: "lost" },
+        { fr: "Fabriquer", inf: "make", pre: "made", par: "made" }, { fr: "Signifier", inf: "mean", pre: "meant", par: "meant" },
+        { fr: "Rencontrer", inf: "meet", pre: "met", par: "met" }, { fr: "Payer", inf: "pay", pre: "paid", par: "paid" },
+        { fr: "Mettre", inf: "put", pre: "put", par: "put" }, { fr: "Lire", inf: "read", pre: "read", par: "read" },
+        { fr: "Monter (vélo)", inf: "ride", pre: "rode", par: "ridden" }, { fr: "Sonner", inf: "ring", pre: "rang", par: "rung" },
+        { fr: "Courir", inf: "run", pre: "ran", par: "run" }, { fr: "Dire", inf: "say", pre: "said", par: "said" },
+        { fr: "Voir", inf: "see", pre: "saw", par: "seen" }, { fr: "Vendre", inf: "sell", pre: "sold", par: "sold" },
+        { fr: "Envoyer", inf: "send", pre: "sent", par: "sent" }, { fr: "Régler", inf: "set", pre: "set", par: "set" },
+        { fr: "Secouer", inf: "shake", pre: "shook", par: "shaken" }, { fr: "Briller", inf: "shine", pre: "shone", par: "shone" },
+        { fr: "Tirer", inf: "shoot", pre: "shot", par: "shot" }, { fr: "Montrer", inf: "show", pre: "showed", par: "shown" },
+        { fr: "Fermer", inf: "shut", pre: "shut", par: "shut" }, { fr: "Chanter", inf: "sing", pre: "sang", par: "sung" },
+        { fr: "S'asseoir", inf: "sit", pre: "sat", par: "sat" }, { fr: "Dormir", inf: "sleep", pre: "slept", par: "slept" },
+        { fr: "Parler", inf: "speak", pre: "spoke", par: "spoken" }, { fr: "Dépenser", inf: "spend", pre: "spent", par: "spent" },
+        { fr: "Se tenir", inf: "stand", pre: "stood", par: "stood" }, { fr: "Voler (objet)", inf: "steal", pre: "stole", par: "stolen" },
+        { fr: "Nager", inf: "swim", pre: "swam", par: "swum" }, { fr: "Prendre", inf: "take", pre: "took", par: "taken" },
+        { fr: "Enseigner", inf: "teach", pre: "taught", par: "taught" }, { fr: "Déchirer", inf: "tear", pre: "tore", par: "torn" },
+        { fr: "Raconter", inf: "tell", pre: "told", par: "told" }, { fr: "Penser", inf: "think", pre: "thought", par: "thought" },
+        { fr: "Lancer", inf: "throw", pre: "threw", par: "thrown" }, { fr: "Comprendre", inf: "understand", pre: "understood", par: "understood" },
+        { fr: "Réveiller", inf: "wake", pre: "woke", par: "woken" }, { fr: "Porter (vêtement)", inf: "wear", pre: "wore", par: "worn" },
+        { fr: "Gagner", inf: "win", pre: "won", par: "won" }, { fr: "Écrire", inf: "write", pre: "wrote", par: "written" }
     ];
 
     let currentIdx = 0, score = 0, quizMode = 'all', showHardOnly = false;
@@ -113,9 +141,10 @@
     }
 
     function speak(text, callback) {
+        window.speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(text);
         msg.lang = 'en-US';
-        msg.rate = 0.9;
+        msg.rate = 0.85;
         if(callback) msg.onend = callback;
         window.speechSynthesis.speak(msg);
     }
@@ -153,7 +182,7 @@
             setTimeout(nextQuestion, 1200);
         } else {
             score = 0;
-            fb.innerHTML = `❌ Erreur :<br><b>${v.pre}</b> | <b>${v.par}</b>`;
+            fb.innerHTML = `❌ Erreur !<br><b>${v.pre}</b> | <b>${v.par}</b>`;
             fb.style.color = "var(--danger)";
             erreursData[v.inf] = (erreursData[v.inf] || 0) + 1;
             localStorage.setItem('erreursData', JSON.stringify(erreursData));
@@ -164,7 +193,6 @@
     function renderRevision() {
         const container = document.getElementById('list-revision');
         const search = document.getElementById('search').value.toLowerCase();
-        
         let list = verbes.filter(v => v.fr.toLowerCase().includes(search) || v.inf.toLowerCase().includes(search));
         if(showHardOnly) list = list.filter(v => (erreursData[v.inf] || 0) >= 2);
 
@@ -184,7 +212,11 @@
 
     function playFullList() {
         let listToPlay = verbes;
-        if(showHardOnly) listToPlay = verbes.filter(v => (erreursData[v.inf] || 0) >= 2);
+        const search = document.getElementById('search').value.toLowerCase();
+        if(search) listToPlay = listToPlay.filter(v => v.fr.toLowerCase().includes(search) || v.inf.toLowerCase().includes(search));
+        if(showHardOnly) listToPlay = listToPlay.filter(v => (erreursData[v.inf] || 0) >= 2);
+        
+        if(listToPlay.length === 0) return alert("Rien à lire avec ces filtres !");
         
         let i = 0;
         function playNext() {
@@ -192,7 +224,7 @@
                 const v = listToPlay[i];
                 speak(`${v.fr} : ${v.inf}, ${v.pre}, ${v.par}`, () => {
                     i++;
-                    setTimeout(playNext, 500);
+                    setTimeout(playNext, 600);
                 });
             }
         }
@@ -210,9 +242,10 @@
             return;
         }
 
-        currentIdx = verbes.indexOf(pool[Math.floor(Math.random() * pool.length)]);
-        document.getElementById('q-fr').innerText = verbes[currentIdx].fr;
-        document.getElementById('q-inf').innerText = verbes[currentIdx].inf;
+        const randomVerb = pool[Math.floor(Math.random() * pool.length)];
+        currentIdx = verbes.indexOf(randomVerb);
+        document.getElementById('q-fr').innerText = randomVerb.fr;
+        document.getElementById('q-inf').innerText = randomVerb.inf;
         document.getElementById('input-pre').value = "";
         document.getElementById('input-par').value = "";
         document.getElementById('feedback').innerText = "";
@@ -221,7 +254,7 @@
     function toggleShowHard() { showHardOnly = !showHardOnly; renderRevision(); }
     
     function resetAll() {
-        if(confirm("Tout effacer (scores et erreurs) ?")) {
+        if(confirm("Effacer vos scores, favoris et erreurs ?")) {
             localStorage.clear();
             location.reload();
         }
