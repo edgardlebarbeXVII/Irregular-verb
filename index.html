@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anglais Master - Audio Bilingue</title>
+    <title>Anglais Pro - Coaching Visuel</title>
     <style>
-        :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; --warning: #f59e0b; --danger: #ef4444; --success: #22c55e; }
+        :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; --warning: #f59e0b; --danger: #ef4444; --success: #22c55e; --fav: #ec4899; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; justify-content: center; }
         .app-container { width: 100%; max-width: 600px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
         
@@ -16,24 +16,35 @@
         .content { padding: 15px; display: none; }
         .content.active { display: block; }
 
+        /* Style des scores mis à jour */
+        .stats { display: flex; justify-content: center; gap: 30px; margin-bottom: 15px; font-weight: 800; font-size: 1.1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+        .stat-item { display: flex; flex-direction: column; align-items: center; }
+        .stat-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; margin-bottom: 2px; }
+        #score { color: var(--success); font-size: 1.4rem; }
+        #best { color: var(--danger); font-size: 1.4rem; }
+
+        .quiz-modes { display: flex; gap: 5px; margin-bottom: 15px; }
+        .mode-btn { flex: 1; font-size: 0.7rem; padding: 8px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; background: white; font-weight: bold; }
+        .mode-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .verb-card { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: center; border: 1px solid #e2e8f0; }
+        input[type="text"] { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-size: 1rem; }
+        .btn-check { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+
         .speed-control { background: #f1f5f9; padding: 10px; border-radius: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 0.8rem; font-weight: bold; }
         .speed-control input { flex: 1; accent-color: var(--primary); }
 
         .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
-        .btn-act { padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; font-size: 0.75rem; color: white; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn-act { padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; font-size: 0.75rem; color: white; }
         
-        .list-container { max-height: 450px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; }
+        .list-container { max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; }
         .verb-item { display: grid; grid-template-columns: 35px 1fr 3fr 40px; padding: 12px 10px; border-bottom: 1px solid #f1f5f9; align-items: center; font-size: 0.85rem; }
         .verb-forms { color: #475569; }
         .verb-forms b { color: var(--primary); }
-        
-        .audio-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; }
         .btn-fav { background: none; border: none; cursor: pointer; font-size: 1.1rem; filter: grayscale(1); }
         .btn-fav.is-fav { filter: grayscale(0); }
-        
-        #feedback { text-align: center; margin-top: 10px; font-weight: bold; min-height: 20px; }
-        .verb-card { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: center; }
-        input[type="text"] { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; }
+        .audio-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; }
+        #feedback { text-align: center; margin-top: 10px; font-weight: bold; min-height: 45px; }
     </style>
 </head>
 <body>
@@ -45,13 +56,30 @@
     </div>
 
     <div id="quiz" class="content active">
+        <div class="quiz-modes">
+            <button class="mode-btn active" onclick="setQuizMode('all', this)">Tous</button>
+            <button class="mode-btn" onclick="setQuizMode('hard', this)">⚠️ Erreurs</button>
+            <button class="mode-btn" onclick="setQuizMode('fav', this)">⭐ Favoris</button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">Score</span>
+                <span id="score">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Record</span>
+                <span id="best">0</span>
+            </div>
+        </div>
+
         <div class="verb-card">
             <h2 id="q-fr">-</h2>
             <p>Base : <strong id="q-inf">-</strong></p>
         </div>
         <input type="text" id="input-pre" placeholder="Prétérit" autocomplete="off">
         <input type="text" id="input-par" placeholder="Participe Passé" autocomplete="off">
-        <button class="btn-act" style="background: var(--primary); width: 100%; font-size: 1rem;" onclick="checkAnswer()">Vérifier</button>
+        <button class="btn-check" onclick="checkAnswer()">Vérifier</button>
         <div id="feedback"></div>
     </div>
 
@@ -61,14 +89,12 @@
             <input type="range" id="speedRange" min="0.3" max="1.3" step="0.1" value="0.8">
             <span id="speedVal">0.8x</span>
         </div>
-
         <div class="action-btns">
             <button class="btn-act" style="background: var(--primary)" onclick="playFullList(false)">Lecture 🔊</button>
             <button class="btn-act" style="background: #8b5cf6" onclick="playFullList(true)">Aléatoire 🔀</button>
             <button class="btn-act" style="background: var(--danger)" onclick="stopAudio()">STOP 🛑</button>
             <button class="btn-act" style="background: var(--warning)" onclick="toggleShowHard()">Priorités ⚠️</button>
         </div>
-        
         <input type="text" id="search" placeholder="Chercher un verbe..." onkeyup="renderRevision()">
         <div class="list-container" id="list-revision"></div>
     </div>
@@ -88,7 +114,7 @@
         { fr: "Couper", inf: "cut", pre: "cut", par: "cut" }, { fr: "Faire", inf: "do", pre: "did", par: "done" },
         { fr: "Dessiner", inf: "draw", pre: "drew", par: "drawn" }, { fr: "Rêver", inf: "dream", pre: "dreamt", par: "dreamt" },
         { fr: "Boire", inf: "drink", pre: "drank", par: "drunk" }, { fr: "Conduire", inf: "drive", pre: "drove", par: "driven" },
-        { fr: "Manger", eat: "eat", pre: "ate", par: "eaten" }, { fr: "Tomber", inf: "fall", pre: "fell", par: "fallen" },
+        { fr: "Manger", inf: "eat", pre: "ate", par: "eaten" }, { fr: "Tomber", inf: "fall", pre: "fell", par: "fallen" },
         { fr: "Nourrir", inf: "feed", pre: "fed", par: "fed" }, { fr: "Ressentir", inf: "feel", pre: "felt", par: "felt" },
         { fr: "Se battre", inf: "fight", pre: "fought", par: "fought" }, { fr: "Trouver", inf: "find", pre: "found", par: "found" },
         { fr: "Voler", inf: "fly", pre: "flew", par: "flown" }, { fr: "Oublier", inf: "forget", pre: "forgot", par: "forgotten" },
@@ -108,7 +134,8 @@
         { fr: "Sonner", inf: "ring", pre: "rang", par: "rung" }, { fr: "Courir", inf: "run", pre: "ran", par: "run" },
         { fr: "Dire", inf: "say", pre: "said", par: "said" }, { fr: "Voir", inf: "see", pre: "saw", par: "seen" },
         { fr: "Vendre", inf: "sell", pre: "sold", par: "sold" }, { fr: "Envoyer", inf: "send", pre: "sent", par: "sent" },
-        { fr: "Montrer", inf: "show", pre: "showed", par: "shown" }, { fr: "Chanter", inf: "sing", pre: "sang", par: "sung" },
+        { fr: "Secouer", inf: "shake", pre: "shook", par: "shaken" }, { fr: "Montrer", inf: "show", pre: "showed", par: "shown" },
+        { fr: "Fermer", inf: "shut", pre: "shut", par: "shut" }, { fr: "Chanter", inf: "sing", pre: "sang", par: "sung" },
         { fr: "S'asseoir", inf: "sit", pre: "sat", par: "sat" }, { fr: "Dormir", inf: "sleep", pre: "slept", par: "slept" },
         { fr: "Parler", inf: "speak", pre: "spoke", par: "spoken" }, { fr: "Dépenser", inf: "spend", pre: "spent", par: "spent" },
         { fr: "Se tenir", inf: "stand", pre: "stood", par: "stood" }, { fr: "Voler", inf: "steal", pre: "stole", par: "stolen" },
@@ -119,39 +146,84 @@
         { fr: "Gagner", inf: "win", pre: "won", par: "won" }, { fr: "Écrire", inf: "write", pre: "wrote", par: "written" }
     ];
 
-    let currentIdx = 0, isPlaying = false, showHardOnly = false;
+    let currentIdx = 0, score = 0, quizMode = 'all', showHardOnly = false, isPlaying = false;
     let erreursData = JSON.parse(localStorage.getItem('erreursData')) || {};
     let favoris = JSON.parse(localStorage.getItem('favoris')) || [];
+    let bestScore = localStorage.getItem('bestScore') || 0;
 
+    document.getElementById('best').innerText = bestScore;
     const range = document.getElementById('speedRange');
     range.oninput = () => document.getElementById('speedVal').innerText = range.value + "x";
 
-    function stopAudio() {
-        isPlaying = false;
-        window.speechSynthesis.cancel();
-    }
+    function stopAudio() { isPlaying = false; window.speechSynthesis.cancel(); }
 
-    // Fonction de prononciation bilingue
-    function speakDual(frenchText, englishText, callback) {
+    function speakDual(frText, enText, callback) {
         window.speechSynthesis.cancel();
-        
-        const msgFr = new SpeechSynthesisUtterance(frenchText);
+        const msgFr = new SpeechSynthesisUtterance(frText);
         msgFr.lang = 'fr-FR';
-        msgFr.rate = 0.9; // Vitesse fixe pour le français pour plus de clarté
-
         msgFr.onend = () => {
             if (!isPlaying) return;
-            // Petite pause de 500ms après le français
             setTimeout(() => {
-                if (!isPlaying) return;
-                const msgEn = new SpeechSynthesisUtterance(englishText);
+                const msgEn = new SpeechSynthesisUtterance(enText);
                 msgEn.lang = 'en-US';
                 msgEn.rate = parseFloat(range.value);
                 msgEn.onend = () => { if (callback && isPlaying) callback(); };
                 window.speechSynthesis.speak(msgEn);
-            }, 500);
+            }, 400);
         };
         window.speechSynthesis.speak(msgFr);
+    }
+
+    function checkAnswer() {
+        const p = document.getElementById('input-pre').value.toLowerCase().trim();
+        const pp = document.getElementById('input-par').value.toLowerCase().trim();
+        const v = verbes[currentIdx];
+        const fb = document.getElementById('feedback');
+        if (p === v.pre && pp === v.par) {
+            score++; updateScore();
+            fb.innerHTML = "<span style='color:var(--success)'>✅ Correct !</span>";
+            isPlaying = true; speakDual("Correct", `${v.inf}, ${v.pre}, ${v.par}`);
+            if (erreursData[v.inf] > 0) { erreursData[v.inf]--; localStorage.setItem('erreursData', JSON.stringify(erreursData)); }
+            setTimeout(nextQuestion, 1500);
+        } else {
+            score = 0; updateScore();
+            fb.innerHTML = `<span style='color:var(--danger)'>❌ Erreur : <br> ${v.pre} | ${v.par}</span>`;
+            erreursData[v.inf] = (erreursData[v.inf] || 0) + 1;
+            localStorage.setItem('erreursData', JSON.stringify(erreursData));
+        }
+    }
+
+    function nextQuestion() {
+        let pool = verbes;
+        if(quizMode === 'hard') pool = verbes.filter(v => (erreursData[v.inf] || 0) >= 2);
+        if(quizMode === 'fav') pool = verbes.filter(v => favoris.includes(v.inf));
+        if(pool.length === 0) {
+            document.getElementById('q-fr').innerText = "Liste vide";
+            document.getElementById('q-inf').innerText = "Changez de mode";
+            return;
+        }
+        const randomVerb = pool[Math.floor(Math.random() * pool.length)];
+        currentIdx = verbes.indexOf(randomVerb);
+        document.getElementById('q-fr').innerText = randomVerb.fr;
+        document.getElementById('q-inf').innerText = randomVerb.inf;
+        document.getElementById('input-pre').value = ""; document.getElementById('input-par').value = "";
+        document.getElementById('feedback').innerText = "";
+    }
+
+    function renderRevision() {
+        const container = document.getElementById('list-revision');
+        const search = document.getElementById('search').value.toLowerCase();
+        let list = verbes.filter(v => v.fr.toLowerCase().includes(search) || v.inf.toLowerCase().includes(search));
+        if(showHardOnly) list = list.filter(v => (erreursData[v.inf] || 0) >= 2);
+
+        container.innerHTML = list.map(v => `
+            <div class="verb-item ${(erreursData[v.inf] || 0) >= 2 ? 'hard-verb' : ''}">
+                <button class="btn-fav ${favoris.includes(v.inf)?'is-fav':''}" onclick="toggleFav('${v.inf}')">⭐</button>
+                <span>${v.fr}</span>
+                <div class="verb-forms"><b>${v.inf}</b> / ${v.pre} / ${v.par}</div>
+                <button class="audio-btn" onclick="isPlaying=true; speakDual('${v.fr}', '${v.inf}, ${v.pre}, ${v.par}')">🔊</button>
+            </div>
+        `).join('');
     }
 
     function playFullList(shuffle) {
@@ -161,18 +233,15 @@
         if(search) list = list.filter(v => v.fr.toLowerCase().includes(search));
         if(showHardOnly) list = list.filter(v => (erreursData[v.inf] || 0) >= 2);
         if(shuffle) list.sort(() => Math.random() - 0.5);
-        
         let i = 0;
-        function playNext() {
+        function playStep() {
             if(i < list.length && isPlaying) {
-                const v = list[i];
-                speakDual(v.fr, `${v.inf}, ${v.pre}, ${v.par}`, () => {
-                    i++;
-                    setTimeout(playNext, 1000); // 1 seconde entre chaque verbe
+                speakDual(list[i].fr, `${list[i].inf}, ${list[i].pre}, ${list[i].par}`, () => {
+                    i++; setTimeout(playStep, 1000);
                 });
             } else { isPlaying = false; }
         }
-        playNext();
+        playStep();
     }
 
     function openTab(tabId, el) {
@@ -184,51 +253,17 @@
         if(tabId === 'revision') renderRevision();
     }
 
-    function renderRevision() {
-        const container = document.getElementById('list-revision');
-        const search = document.getElementById('search').value.toLowerCase();
-        let list = verbes.filter(v => v.fr.toLowerCase().includes(search) || v.inf.toLowerCase().includes(search));
-        if(showHardOnly) list = list.filter(v => (erreursData[v.inf] || 0) >= 2);
-
-        container.innerHTML = list.map(v => `
-            <div class="verb-item">
-                <button class="btn-fav ${favoris.includes(v.inf)?'is-fav':''}" onclick="toggleFav('${v.inf}')">⭐</button>
-                <span>${v.fr}</span>
-                <div class="verb-forms"><b>${v.inf}</b> / ${v.pre} / ${v.par}</div>
-                <button class="audio-btn" onclick="isPlaying=true; speakDual('${v.fr}', '${v.inf}, ${v.pre}, ${v.par}')">🔊</button>
-            </div>
-        `).join('');
-    }
-
-    // Fonctions Quiz simplifiées pour l'exemple
-    function nextQuestion() {
-        currentIdx = Math.floor(Math.random() * verbes.length);
-        document.getElementById('q-fr').innerText = verbes[currentIdx].fr;
-        document.getElementById('q-inf').innerText = verbes[currentIdx].inf;
-        document.getElementById('input-pre').value = ""; document.getElementById('input-par').value = "";
-        document.getElementById('feedback').innerText = "";
-    }
-
-    function checkAnswer() {
-        const p = document.getElementById('input-pre').value.toLowerCase().trim();
-        const pp = document.getElementById('input-par').value.toLowerCase().trim();
-        const v = verbes[currentIdx];
-        if (p === v.pre && pp === v.par) {
-            isPlaying = true; speakDual("Correct", `${v.inf}, ${v.pre}, ${v.par}`);
-            document.getElementById('feedback').innerHTML = "✅ Bravo !";
-            setTimeout(nextQuestion, 1500);
-        } else {
-            document.getElementById('feedback').innerHTML = "❌ " + v.pre + " | " + v.par;
-            erreursData[v.inf] = (erreursData[v.inf] || 0) + 1;
-        }
-    }
-
+    function setQuizMode(m, b) { quizMode = m; document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active')); b.classList.add('active'); nextQuestion(); }
     function toggleShowHard() { showHardOnly = !showHardOnly; renderRevision(); }
     function toggleFav(inf) {
         if(favoris.includes(inf)) favoris = favoris.filter(f => f !== inf);
         else favoris.push(inf);
         localStorage.setItem('favoris', JSON.stringify(favoris));
         renderRevision();
+    }
+    function updateScore() {
+        document.getElementById('score').innerText = score;
+        if (score > bestScore) { bestScore = score; localStorage.setItem('bestScore', bestScore); document.getElementById('best').innerText = bestScore; }
     }
 
     nextQuestion();
