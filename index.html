@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Verbes Irréguliers</title>
+    <style>
+        :root { --primary: #6366f1; --success: #22c55e; --error: #ef4444; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 0.9rem; color: #666; }
+        h1 { color: #1f2937; margin-bottom: 0.5rem; }
+        .verb-box { background: #f8fafc; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; border: 2px solid #e2e8f0; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
+        button { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+        .audio-btn { background: #e2e8f0; color: #475569; margin-top: 5px; font-size: 0.8rem; }
+        #feedback { margin-top: 1rem; min-height: 1.5rem; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="stats">
+        <span>Score: <b id="score">0</b></span>
+        <span>Record: <b id="best">0</b></span>
+    </div>
+    
+    <div class="verb-box">
+        <small id="translation">Traduire :</small>
+        <h1 id="verb-fr">Commencer</h1>
+        <p>Infinitif : <strong id="verb-inf">begin</strong></p>
+        <button class="audio-btn" onclick="prononcer()">🔊 Écouter l'infinitif</button>
+    </div>
+
+    <input type="text" id="preti" placeholder="Prétérit" autocomplete="off">
+    <input type="text" id="participe" placeholder="Participe passé" autocomplete="off">
+    
+    <button onclick="verifier()">Vérifier</button>
+    <div id="feedback"></div>
+</div>
+
+<script>
+    const verbes = [
+        { fr: "Être", inf: "be", pre: "was", par: "been" },
+        { fr: "Devenir", inf: "become", pre: "became", par: "become" },
+        { fr: "Commencer", inf: "begin", pre: "began", par: "begun" },
+        { fr: "Casser", inf: "break", pre: "broke", par: "broken" },
+        { fr: "Apporter", inf: "bring", pre: "brought", par: "brought" }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+    let bestScore = localStorage.getItem('bestScore') || 0;
+    document.getElementById('best').innerText = bestScore;
+
+    function prononcer() {
+        const text = verbes[currentIdx].inf;
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'en-US';
+        window.speechSynthesis.speak(msg);
+    }
+
+    function verifier() {
+        const p = document.getElementById('preti').value.toLowerCase().trim();
+        const pp = document.getElementById('participe').value.toLowerCase().trim();
+        const v = verbes[currentIdx];
+        const feedback = document.getElementById('feedback');
+
+        if (p === v.pre && pp === v.par) {
+            score++;
+            feedback.innerText = "✅ Excellent !";
+            feedback.style.color = "var(--success)";
+            prononcerPhrase(v.inf, v.pre, v.par); // Prononce toute la ligne si correct
+            updateScore();
+            setTimeout(nextVerb, 2000);
+        } else {
+            score = 0; // On réinitialise si erreur (mode défi)
+            feedback.innerHTML = `❌ Non : ${v.pre}, ${v.par}`;
+            feedback.style.color = "var(--error)";
+            updateScore();
+        }
+    }
+
+    function prononcerPhrase(inf, pre, par) {
+        const msg = new SpeechSynthesisUtterance(`${inf}, ${pre}, ${par}`);
+        msg.lang = 'en-US';
+        window.speechSynthesis.speak(msg);
+    }
+
+    function nextVerb() {
+        currentIdx = Math.floor(Math.random() * verbes.length);
+        document.getElementById('verb-fr').innerText = verbes[currentIdx].fr;
+        document.getElementById('verb-inf').innerText = verbes[currentIdx].inf;
+        document.getElementById('preti').value = "";
+        document.getElementById('participe').value = "";
+        document.getElementById('feedback').innerText = "";
+    }
+
+    function updateScore() {
+        document.getElementById('score').innerText = score;
+        if (score > bestScore) {
+            bestScore = score;
+            localStorage.setItem('bestScore', bestScore);
+            document.getElementById('best').innerText = bestScore;
+        }
+    }
+
+    // Lancer un premier verbe au hasard au chargement
+    nextVerb();
+</script>
+
+</body>
+</html>
