@@ -3,34 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anglais Pro - Voix Bilingues</title>
+    <title>Anglais Master - Audio Bilingue</title>
     <style>
-        :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; --warning: #f59e0b; --danger: #ef4444; --success: #22c55e; --fav: #ec4899; }
+        :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; --warning: #f59e0b; --danger: #ef4444; --success: #22c55e; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; justify-content: center; }
-        .app-container { width: 100%; max-width: 600px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; margin-top: 10px; }
+        .app-container { width: 100%; max-width: 600px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
+        
         .tabs { display: flex; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; }
         .tab { flex: 1; padding: 15px; border: none; background: none; cursor: pointer; font-weight: bold; color: #64748b; }
         .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: white; }
+
         .content { padding: 15px; display: none; }
         .content.active { display: block; }
+
         .speed-control { background: #f1f5f9; padding: 10px; border-radius: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 0.8rem; font-weight: bold; }
-        .speed-control input { flex: 1; height: 5px; accent-color: var(--primary); }
+        .speed-control input { flex: 1; accent-color: var(--primary); }
+
         .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
         .btn-act { padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; font-size: 0.75rem; color: white; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        
         .list-container { max-height: 450px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; }
-        .verb-header { display: grid; grid-template-columns: 35px 1fr 3fr 40px; padding: 10px; background: #f8fafc; font-weight: bold; font-size: 0.75rem; border-bottom: 2px solid #eee; position: sticky; top: 0; z-index: 10; }
-        .verb-item { display: grid; grid-template-columns: 35px 1fr 3fr 40px; padding: 12px 10px; border-bottom: 1px solid #f1f5f9; align-items: center; font-size: 0.82rem; }
+        .verb-item { display: grid; grid-template-columns: 35px 1fr 3fr 40px; padding: 12px 10px; border-bottom: 1px solid #f1f5f9; align-items: center; font-size: 0.85rem; }
         .verb-forms { color: #475569; }
         .verb-forms b { color: var(--primary); }
+        
         .audio-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; }
-        .btn-fav { background: none; border: none; cursor: pointer; font-size: 1.1rem; filter: grayscale(1); padding: 0; }
+        .btn-fav { background: none; border: none; cursor: pointer; font-size: 1.1rem; filter: grayscale(1); }
         .btn-fav.is-fav { filter: grayscale(0); }
+        
+        #feedback { text-align: center; margin-top: 10px; font-weight: bold; min-height: 20px; }
+        .verb-card { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: center; }
         input[type="text"] { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; }
-        .quiz-modes { display: flex; gap: 5px; margin-bottom: 15px; }
-        .mode-btn { flex: 1; font-size: 0.7rem; padding: 8px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; background: white; font-weight: bold; }
-        .mode-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-        .verb-card { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: center; border: 1px solid #e2e8f0; }
-        .btn-check { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
     </style>
 </head>
 <body>
@@ -42,19 +45,14 @@
     </div>
 
     <div id="quiz" class="content active">
-        <div class="quiz-modes">
-            <button class="mode-btn active" onclick="setQuizMode('all', this)">Tous</button>
-            <button class="mode-btn" onclick="setQuizMode('hard', this)">⚠️ Erreurs</button>
-            <button class="mode-btn" onclick="setQuizMode('fav', this)">⭐ Favoris</button>
-        </div>
         <div class="verb-card">
             <h2 id="q-fr">-</h2>
             <p>Base : <strong id="q-inf">-</strong></p>
         </div>
         <input type="text" id="input-pre" placeholder="Prétérit" autocomplete="off">
         <input type="text" id="input-par" placeholder="Participe Passé" autocomplete="off">
-        <button class="btn-check" onclick="checkAnswer()">Vérifier</button>
-        <div id="feedback" style="text-align:center; margin-top:10px; font-weight:bold;"></div>
+        <button class="btn-act" style="background: var(--primary); width: 100%; font-size: 1rem;" onclick="checkAnswer()">Vérifier</button>
+        <div id="feedback"></div>
     </div>
 
     <div id="revision" class="content">
@@ -72,13 +70,7 @@
         </div>
         
         <input type="text" id="search" placeholder="Chercher un verbe..." onkeyup="renderRevision()">
-        
-        <div class="list-container">
-            <div class="verb-header">
-                <span></span><span>FR</span><span>Anglais (3 formes)</span><span></span>
-            </div>
-            <div id="list-revision"></div>
-        </div>
+        <div class="list-container" id="list-revision"></div>
     </div>
 </div>
 
@@ -96,41 +88,38 @@
         { fr: "Couper", inf: "cut", pre: "cut", par: "cut" }, { fr: "Faire", inf: "do", pre: "did", par: "done" },
         { fr: "Dessiner", inf: "draw", pre: "drew", par: "drawn" }, { fr: "Rêver", inf: "dream", pre: "dreamt", par: "dreamt" },
         { fr: "Boire", inf: "drink", pre: "drank", par: "drunk" }, { fr: "Conduire", inf: "drive", pre: "drove", par: "driven" },
-        { fr: "Manger", inf: "eat", pre: "ate", par: "eaten" }, { fr: "Tomber", inf: "fall", pre: "fell", par: "fallen" },
+        { fr: "Manger", eat: "eat", pre: "ate", par: "eaten" }, { fr: "Tomber", inf: "fall", pre: "fell", par: "fallen" },
         { fr: "Nourrir", inf: "feed", pre: "fed", par: "fed" }, { fr: "Ressentir", inf: "feel", pre: "felt", par: "felt" },
         { fr: "Se battre", inf: "fight", pre: "fought", par: "fought" }, { fr: "Trouver", inf: "find", pre: "found", par: "found" },
-        { fr: "Voler (air)", inf: "fly", pre: "flew", par: "flown" }, { fr: "Oublier", inf: "forget", pre: "forgot", par: "forgotten" },
+        { fr: "Voler", inf: "fly", pre: "flew", par: "flown" }, { fr: "Oublier", inf: "forget", pre: "forgot", par: "forgotten" },
         { fr: "Pardonner", inf: "forgive", pre: "forgave", par: "forgiven" }, { fr: "Geler", inf: "freeze", pre: "froze", par: "frozen" },
         { fr: "Obtenir", inf: "get", pre: "got", par: "got" }, { fr: "Donner", inf: "give", pre: "gave", par: "given" },
         { fr: "Aller", inf: "go", pre: "went", par: "gone" }, { fr: "Grandir", inf: "grow", pre: "grew", par: "grown" },
-        { fr: "Accrocher", inf: "hang", pre: "hung", par: "hung" }, { fr: "Avoir", inf: "have", pre: "had", par: "had" },
-        { fr: "Entendre", inf: "hear", pre: "heard", par: "heard" }, { fr: "Cacher", inf: "hide", pre: "hid", par: "hidden" },
-        { fr: "Frapper", inf: "hit", pre: "hit", par: "hit" }, { fr: "Tenir", inf: "hold", pre: "held", par: "held" },
-        { fr: "Blesser", inf: "hurt", pre: "hurt", par: "hurt" }, { fr: "Garder", inf: "keep", pre: "kept", par: "kept" },
-        { fr: "Savoir", inf: "know", pre: "knew", par: "known" }, { fr: "Poser", inf: "lay", pre: "laid", par: "laid" },
-        { fr: "Mener", inf: "lead", pre: "led", par: "led" }, { fr: "Apprendre", inf: "learn", pre: "learnt", par: "learnt" },
-        { fr: "Quitter", inf: "leave", pre: "left", par: "left" }, { fr: "Prêter", inf: "lend", pre: "lent", par: "lent" },
-        { fr: "Laisser", inf: "let", pre: "let", par: "let" }, { fr: "Perdre", inf: "lose", pre: "lost", par: "lost" },
-        { fr: "Fabriquer", inf: "make", pre: "made", par: "made" }, { fr: "Signifier", inf: "mean", pre: "meant", par: "meant" },
-        { fr: "Rencontrer", inf: "meet", pre: "met", par: "met" }, { fr: "Payer", inf: "pay", pre: "paid", par: "paid" },
-        { fr: "Mettre", inf: "put", pre: "put", par: "put" }, { fr: "Lire", inf: "read", pre: "read", par: "read" },
-        { fr: "Monter", inf: "ride", pre: "rode", par: "ridden" }, { fr: "Sonner", inf: "ring", pre: "rang", par: "rung" },
-        { fr: "Courir", inf: "run", pre: "ran", par: "run" }, { fr: "Dire", inf: "say", pre: "said", par: "said" },
-        { fr: "Voir", inf: "see", pre: "saw", par: "seen" }, { fr: "Vendre", inf: "sell", pre: "sold", par: "sold" },
-        { fr: "Envoyer", inf: "send", pre: "sent", par: "sent" }, { fr: "Secouer", inf: "shake", pre: "shook", par: "shaken" },
+        { fr: "Avoir", inf: "have", pre: "had", par: "had" }, { fr: "Entendre", inf: "hear", pre: "heard", par: "heard" },
+        { fr: "Cacher", inf: "hide", pre: "hid", par: "hidden" }, { fr: "Frapper", inf: "hit", pre: "hit", par: "hit" },
+        { fr: "Tenir", inf: "hold", pre: "held", par: "held" }, { fr: "Blesser", inf: "hurt", pre: "hurt", par: "hurt" },
+        { fr: "Garder", inf: "keep", pre: "kept", par: "kept" }, { fr: "Savoir", inf: "know", pre: "knew", par: "known" },
+        { fr: "Apprendre", inf: "learn", pre: "learnt", par: "learnt" }, { fr: "Quitter", inf: "leave", pre: "left", par: "left" },
+        { fr: "Prêter", inf: "lend", pre: "lent", par: "lent" }, { fr: "Laisser", inf: "let", pre: "let", par: "let" },
+        { fr: "Perdre", inf: "lose", pre: "lost", par: "lost" }, { fr: "Fabriquer", inf: "make", pre: "made", par: "made" },
+        { fr: "Signifier", inf: "mean", pre: "meant", par: "meant" }, { fr: "Rencontrer", inf: "meet", pre: "met", par: "met" },
+        { fr: "Payer", inf: "pay", pre: "paid", par: "paid" }, { fr: "Mettre", inf: "put", pre: "put", par: "put" },
+        { fr: "Lire", inf: "read", pre: "read", par: "read" }, { fr: "Monter", inf: "ride", pre: "rode", par: "ridden" },
+        { fr: "Sonner", inf: "ring", pre: "rang", par: "rung" }, { fr: "Courir", inf: "run", pre: "ran", par: "run" },
+        { fr: "Dire", inf: "say", pre: "said", par: "said" }, { fr: "Voir", inf: "see", pre: "saw", par: "seen" },
+        { fr: "Vendre", inf: "sell", pre: "sold", par: "sold" }, { fr: "Envoyer", inf: "send", pre: "sent", par: "sent" },
         { fr: "Montrer", inf: "show", pre: "showed", par: "shown" }, { fr: "Chanter", inf: "sing", pre: "sang", par: "sung" },
         { fr: "S'asseoir", inf: "sit", pre: "sat", par: "sat" }, { fr: "Dormir", inf: "sleep", pre: "slept", par: "slept" },
         { fr: "Parler", inf: "speak", pre: "spoke", par: "spoken" }, { fr: "Dépenser", inf: "spend", pre: "spent", par: "spent" },
         { fr: "Se tenir", inf: "stand", pre: "stood", par: "stood" }, { fr: "Voler", inf: "steal", pre: "stole", par: "stolen" },
         { fr: "Nager", inf: "swim", pre: "swam", par: "swum" }, { fr: "Prendre", inf: "take", pre: "took", par: "taken" },
         { fr: "Enseigner", inf: "teach", pre: "taught", par: "taught" }, { fr: "Raconter", inf: "tell", pre: "told", par: "told" },
-        { fr: "Penser", inf: "think", pre: "thought", par: "thought" }, { fr: "Lancer", inf: "throw", pre: "threw", par: "thrown" },
-        { fr: "Comprendre", inf: "understand", pre: "understood", par: "understood" }, { fr: "Réveiller", inf: "wake", pre: "woke", par: "woken" },
-        { fr: "Porter", inf: "wear", pre: "wore", par: "worn" }, { fr: "Gagner", inf: "win", pre: "won", par: "won" },
-        { fr: "Écrire", inf: "write", pre: "wrote", par: "written" }
+        { fr: "Penser", inf: "think", pre: "thought", par: "thought" }, { fr: "Comprendre", inf: "understand", pre: "understood", par: "understood" },
+        { fr: "Réveiller", inf: "wake", pre: "woke", par: "woken" }, { fr: "Porter", inf: "wear", pre: "wore", par: "worn" },
+        { fr: "Gagner", inf: "win", pre: "won", par: "won" }, { fr: "Écrire", inf: "write", pre: "wrote", par: "written" }
     ];
 
-    let currentIdx = 0, quizMode = 'all', showHardOnly = false, isPlaying = false;
+    let currentIdx = 0, isPlaying = false, showHardOnly = false;
     let erreursData = JSON.parse(localStorage.getItem('erreursData')) || {};
     let favoris = JSON.parse(localStorage.getItem('favoris')) || [];
 
@@ -142,43 +131,48 @@
         window.speechSynthesis.cancel();
     }
 
-    // FONCTION SPEAK AMÉLIORÉE : Gère FR et EN
-    function speak(text, lang = 'en-US', callback) {
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = lang;
-        msg.rate = parseFloat(range.value);
-        msg.onend = () => { if(callback && isPlaying) callback(); };
-        window.speechSynthesis.speak(msg);
+    // Fonction de prononciation bilingue
+    function speakDual(frenchText, englishText, callback) {
+        window.speechSynthesis.cancel();
+        
+        const msgFr = new SpeechSynthesisUtterance(frenchText);
+        msgFr.lang = 'fr-FR';
+        msgFr.rate = 0.9; // Vitesse fixe pour le français pour plus de clarté
+
+        msgFr.onend = () => {
+            if (!isPlaying) return;
+            // Petite pause de 500ms après le français
+            setTimeout(() => {
+                if (!isPlaying) return;
+                const msgEn = new SpeechSynthesisUtterance(englishText);
+                msgEn.lang = 'en-US';
+                msgEn.rate = parseFloat(range.value);
+                msgEn.onend = () => { if (callback && isPlaying) callback(); };
+                window.speechSynthesis.speak(msgEn);
+            }, 500);
+        };
+        window.speechSynthesis.speak(msgFr);
     }
 
     function playFullList(shuffle) {
         isPlaying = true;
-        window.speechSynthesis.cancel();
-        let list = verbes;
+        let list = [...verbes];
         const search = document.getElementById('search').value.toLowerCase();
         if(search) list = list.filter(v => v.fr.toLowerCase().includes(search));
         if(showHardOnly) list = list.filter(v => (erreursData[v.inf] || 0) >= 2);
-        if(shuffle) list = [...list].sort(() => Math.random() - 0.5);
+        if(shuffle) list.sort(() => Math.random() - 0.5);
         
         let i = 0;
-        function playStep() {
+        function playNext() {
             if(i < list.length && isPlaying) {
                 const v = list[i];
-                // 1. Dit le français
-                speak(v.fr, 'fr-FR', () => {
-                    if(!isPlaying) return;
-                    // 2. Petite pause, puis dit les 3 formes en anglais
-                    setTimeout(() => {
-                        if(!isPlaying) return;
-                        speak(`${v.inf}, ${v.pre}, ${v.par}`, 'en-US', () => {
-                            i++;
-                            setTimeout(playStep, 800);
-                        });
-                    }, 400);
+                speakDual(v.fr, `${v.inf}, ${v.pre}, ${v.par}`, () => {
+                    i++;
+                    setTimeout(playNext, 1000); // 1 seconde entre chaque verbe
                 });
             } else { isPlaying = false; }
         }
-        playStep();
+        playNext();
     }
 
     function openTab(tabId, el) {
@@ -201,24 +195,14 @@
                 <button class="btn-fav ${favoris.includes(v.inf)?'is-fav':''}" onclick="toggleFav('${v.inf}')">⭐</button>
                 <span>${v.fr}</span>
                 <div class="verb-forms"><b>${v.inf}</b> / ${v.pre} / ${v.par}</div>
-                <button class="audio-btn" onclick="speak('${v.inf}, ${v.pre}, ${v.par}', 'en-US')">🔊</button>
+                <button class="audio-btn" onclick="isPlaying=true; speakDual('${v.fr}', '${v.inf}, ${v.pre}, ${v.par}')">🔊</button>
             </div>
         `).join('');
     }
 
-    function toggleFav(inf) {
-        if(favoris.includes(inf)) favoris = favoris.filter(f => f !== inf);
-        else favoris.push(inf);
-        localStorage.setItem('favoris', JSON.stringify(favoris));
-        renderRevision();
-    }
-
+    // Fonctions Quiz simplifiées pour l'exemple
     function nextQuestion() {
-        let pool = verbes;
-        if(quizMode === 'hard') pool = verbes.filter(v => (erreursData[v.inf] || 0) >= 2);
-        if(quizMode === 'fav') pool = verbes.filter(v => favoris.includes(v.inf));
-        if(pool.length === 0) return document.getElementById('q-fr').innerText = "Liste vide";
-        currentIdx = verbes.indexOf(pool[Math.floor(Math.random() * pool.length)]);
+        currentIdx = Math.floor(Math.random() * verbes.length);
         document.getElementById('q-fr').innerText = verbes[currentIdx].fr;
         document.getElementById('q-inf').innerText = verbes[currentIdx].inf;
         document.getElementById('input-pre').value = ""; document.getElementById('input-par').value = "";
@@ -230,29 +214,25 @@
         const pp = document.getElementById('input-par').value.toLowerCase().trim();
         const v = verbes[currentIdx];
         if (p === v.pre && pp === v.par) {
-            speak(`${v.inf}, ${v.pre}, ${v.par}`, 'en-US');
-            document.getElementById('feedback').innerHTML = "<span style='color:var(--success)'>✅ Correct !</span>";
-            if (erreursData[v.inf] > 0) {
-                erreursData[v.inf] -= 1;
-                localStorage.setItem('erreursData', JSON.stringify(erreursData));
-            }
-            setTimeout(nextQuestion, 1200);
+            isPlaying = true; speakDual("Correct", `${v.inf}, ${v.pre}, ${v.par}`);
+            document.getElementById('feedback').innerHTML = "✅ Bravo !";
+            setTimeout(nextQuestion, 1500);
         } else {
-            document.getElementById('feedback').innerHTML = `<span style='color:var(--danger)'>❌ Erreur : ${v.pre} | ${v.par}</span>`;
+            document.getElementById('feedback').innerHTML = "❌ " + v.pre + " | " + v.par;
             erreursData[v.inf] = (erreursData[v.inf] || 0) + 1;
-            localStorage.setItem('erreursData', JSON.stringify(erreursData));
         }
     }
 
-    function setQuizMode(m, b) {
-        quizMode = m;
-        document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-        b.classList.add('active');
-        nextQuestion();
+    function toggleShowHard() { showHardOnly = !showHardOnly; renderRevision(); }
+    function toggleFav(inf) {
+        if(favoris.includes(inf)) favoris = favoris.filter(f => f !== inf);
+        else favoris.push(inf);
+        localStorage.setItem('favoris', JSON.stringify(favoris));
+        renderRevision();
     }
 
-    function toggleShowHard() { showHardOnly = !showHardOnly; renderRevision(); }
     nextQuestion();
+    renderRevision();
 </script>
 </body>
 </html>
