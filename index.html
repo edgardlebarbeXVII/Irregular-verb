@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anglais Master - 3 Formes Complètes</title>
+    <title>Anglais Pro - Voix Bilingues</title>
     <style>
         :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; --warning: #f59e0b; --danger: #ef4444; --success: #22c55e; --fav: #ec4899; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; justify-content: center; }
@@ -13,33 +13,24 @@
         .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: white; }
         .content { padding: 15px; display: none; }
         .content.active { display: block; }
-
-        /* Vitesse Audio */
         .speed-control { background: #f1f5f9; padding: 10px; border-radius: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 0.8rem; font-weight: bold; }
         .speed-control input { flex: 1; height: 5px; accent-color: var(--primary); }
-
-        .verb-card { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: center; border: 1px solid #e2e8f0; }
+        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .btn-act { padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; font-size: 0.75rem; color: white; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .list-container { max-height: 450px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; }
+        .verb-header { display: grid; grid-template-columns: 35px 1fr 3fr 40px; padding: 10px; background: #f8fafc; font-weight: bold; font-size: 0.75rem; border-bottom: 2px solid #eee; position: sticky; top: 0; z-index: 10; }
+        .verb-item { display: grid; grid-template-columns: 35px 1fr 3fr 40px; padding: 12px 10px; border-bottom: 1px solid #f1f5f9; align-items: center; font-size: 0.82rem; }
+        .verb-forms { color: #475569; }
+        .verb-forms b { color: var(--primary); }
+        .audio-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; }
+        .btn-fav { background: none; border: none; cursor: pointer; font-size: 1.1rem; filter: grayscale(1); padding: 0; }
+        .btn-fav.is-fav { filter: grayscale(0); }
+        input[type="text"] { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; }
         .quiz-modes { display: flex; gap: 5px; margin-bottom: 15px; }
         .mode-btn { flex: 1; font-size: 0.7rem; padding: 8px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; background: white; font-weight: bold; }
         .mode-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-
-        input[type="text"] { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-size: 1rem; }
+        .verb-card { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: center; border: 1px solid #e2e8f0; }
         .btn-check { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
-        
-        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 15px; }
-        .btn-act { padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 0.75rem; color: white; }
-        
-        /* Liste de révision améliorée pour voir les 3 temps */
-        .list-container { max-height: 450px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; }
-        .verb-header { display: grid; grid-template-columns: 35px 1fr 3fr 40px; padding: 10px; background: #f8fafc; font-weight: bold; font-size: 0.75rem; border-bottom: 2px solid #eee; position: sticky; top: 0; }
-        .verb-item { display: grid; grid-template-columns: 35px 1fr 3fr 40px; padding: 12px 10px; border-bottom: 1px solid #f1f5f9; align-items: center; font-size: 0.82rem; }
-        .verb-forms { display: flex; flex-wrap: wrap; gap: 4px; color: #475569; }
-        .verb-forms b { color: var(--primary); }
-        .hard-verb { background: #fffbeb !important; }
-        .btn-fav { background: none; border: none; cursor: pointer; font-size: 1.1rem; filter: grayscale(1); transition: 0.2s; padding: 0; }
-        .btn-fav.is-fav { filter: grayscale(0); }
-        .audio-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; }
-        #feedback { margin-top: 10px; text-align: center; font-weight: bold; min-height: 40px; }
     </style>
 </head>
 <body>
@@ -60,10 +51,10 @@
             <h2 id="q-fr">-</h2>
             <p>Base : <strong id="q-inf">-</strong></p>
         </div>
-        <input type="text" id="input-pre" placeholder="Prétérit (2ème colonne)" autocomplete="off">
-        <input type="text" id="input-par" placeholder="Participe Passé (3ème colonne)" autocomplete="off">
+        <input type="text" id="input-pre" placeholder="Prétérit" autocomplete="off">
+        <input type="text" id="input-par" placeholder="Participe Passé" autocomplete="off">
         <button class="btn-check" onclick="checkAnswer()">Vérifier</button>
-        <div id="feedback"></div>
+        <div id="feedback" style="text-align:center; margin-top:10px; font-weight:bold;"></div>
     </div>
 
     <div id="revision" class="content">
@@ -74,17 +65,17 @@
         </div>
 
         <div class="action-btns">
-            <button class="btn-act" style="background: var(--warning)" onclick="toggleShowHard()">Priorités ⚠️</button>
-            <button class="btn-act" style="background: #64748b" onclick="resetAll()">Reset ⚙️</button>
-            <button class="btn-act" style="background: var(--primary)" onclick="playFullList(false)">Lecture Normale 🔊</button>
+            <button class="btn-act" style="background: var(--primary)" onclick="playFullList(false)">Lecture 🔊</button>
             <button class="btn-act" style="background: #8b5cf6" onclick="playFullList(true)">Aléatoire 🔀</button>
+            <button class="btn-act" style="background: var(--danger)" onclick="stopAudio()">STOP 🛑</button>
+            <button class="btn-act" style="background: var(--warning)" onclick="toggleShowHard()">Priorités ⚠️</button>
         </div>
         
         <input type="text" id="search" placeholder="Chercher un verbe..." onkeyup="renderRevision()">
         
         <div class="list-container">
             <div class="verb-header">
-                <span></span><span>FR</span><span>Anglais (Inf / Prét / P.P)</span><span></span>
+                <span></span><span>FR</span><span>Anglais (3 formes)</span><span></span>
             </div>
             <div id="list-revision"></div>
         </div>
@@ -139,23 +130,30 @@
         { fr: "Écrire", inf: "write", pre: "wrote", par: "written" }
     ];
 
-    let currentIdx = 0, quizMode = 'all', showHardOnly = false;
+    let currentIdx = 0, quizMode = 'all', showHardOnly = false, isPlaying = false;
     let erreursData = JSON.parse(localStorage.getItem('erreursData')) || {};
     let favoris = JSON.parse(localStorage.getItem('favoris')) || [];
 
     const range = document.getElementById('speedRange');
     range.oninput = () => document.getElementById('speedVal').innerText = range.value + "x";
 
-    function speak(text, callback) {
+    function stopAudio() {
+        isPlaying = false;
         window.speechSynthesis.cancel();
+    }
+
+    // FONCTION SPEAK AMÉLIORÉE : Gère FR et EN
+    function speak(text, lang = 'en-US', callback) {
         const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = 'en-US';
+        msg.lang = lang;
         msg.rate = parseFloat(range.value);
-        if(callback) msg.onend = callback;
+        msg.onend = () => { if(callback && isPlaying) callback(); };
         window.speechSynthesis.speak(msg);
     }
 
     function playFullList(shuffle) {
+        isPlaying = true;
+        window.speechSynthesis.cancel();
         let list = verbes;
         const search = document.getElementById('search').value.toLowerCase();
         if(search) list = list.filter(v => v.fr.toLowerCase().includes(search));
@@ -163,22 +161,49 @@
         if(shuffle) list = [...list].sort(() => Math.random() - 0.5);
         
         let i = 0;
-        function play() {
-            if(i < list.length) {
-                speak(`${list[i].fr} : ${list[i].inf}, ${list[i].pre}, ${list[i].par}`, () => {
-                    i++; setTimeout(play, 600);
+        function playStep() {
+            if(i < list.length && isPlaying) {
+                const v = list[i];
+                // 1. Dit le français
+                speak(v.fr, 'fr-FR', () => {
+                    if(!isPlaying) return;
+                    // 2. Petite pause, puis dit les 3 formes en anglais
+                    setTimeout(() => {
+                        if(!isPlaying) return;
+                        speak(`${v.inf}, ${v.pre}, ${v.par}`, 'en-US', () => {
+                            i++;
+                            setTimeout(playStep, 800);
+                        });
+                    }, 400);
                 });
-            }
+            } else { isPlaying = false; }
         }
-        play();
+        playStep();
     }
 
     function openTab(tabId, el) {
+        stopAudio();
         document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         el.classList.add('active');
         if(tabId === 'revision') renderRevision();
+    }
+
+    function renderRevision() {
+        const container = document.getElementById('list-revision');
+        const search = document.getElementById('search').value.toLowerCase();
+        let list = verbes.filter(v => v.fr.toLowerCase().includes(search) || v.inf.toLowerCase().includes(search));
+        if(showHardOnly) list = list.filter(v => (erreursData[v.inf] || 0) >= 2);
+
+        container.innerHTML = list.map(v => `
+            <div class="verb-item">
+                <button class="btn-fav ${favoris.includes(v.inf)?'is-fav':''}" onclick="toggleFav('${v.inf}')">⭐</button>
+                <span>${v.fr}</span>
+                <div class="verb-forms"><b>${v.inf}</b> / ${v.pre} / ${v.par}</div>
+                <button class="audio-btn" onclick="speak('${v.inf}, ${v.pre}, ${v.par}', 'en-US')">🔊</button>
+            </div>
+        `).join('');
     }
 
     function toggleFav(inf) {
@@ -188,58 +213,35 @@
         renderRevision();
     }
 
+    function nextQuestion() {
+        let pool = verbes;
+        if(quizMode === 'hard') pool = verbes.filter(v => (erreursData[v.inf] || 0) >= 2);
+        if(quizMode === 'fav') pool = verbes.filter(v => favoris.includes(v.inf));
+        if(pool.length === 0) return document.getElementById('q-fr').innerText = "Liste vide";
+        currentIdx = verbes.indexOf(pool[Math.floor(Math.random() * pool.length)]);
+        document.getElementById('q-fr').innerText = verbes[currentIdx].fr;
+        document.getElementById('q-inf').innerText = verbes[currentIdx].inf;
+        document.getElementById('input-pre').value = ""; document.getElementById('input-par').value = "";
+        document.getElementById('feedback').innerText = "";
+    }
+
     function checkAnswer() {
         const p = document.getElementById('input-pre').value.toLowerCase().trim();
         const pp = document.getElementById('input-par').value.toLowerCase().trim();
         const v = verbes[currentIdx];
         if (p === v.pre && pp === v.par) {
-            speak(`${v.inf}, ${v.pre}, ${v.par}`);
+            speak(`${v.inf}, ${v.pre}, ${v.par}`, 'en-US');
+            document.getElementById('feedback').innerHTML = "<span style='color:var(--success)'>✅ Correct !</span>";
             if (erreursData[v.inf] > 0) {
                 erreursData[v.inf] -= 1;
                 localStorage.setItem('erreursData', JSON.stringify(erreursData));
             }
-            document.getElementById('feedback').innerHTML = "<span style='color:var(--success)'>✅ Correct !</span>";
             setTimeout(nextQuestion, 1200);
         } else {
             document.getElementById('feedback').innerHTML = `<span style='color:var(--danger)'>❌ Erreur : ${v.pre} | ${v.par}</span>`;
             erreursData[v.inf] = (erreursData[v.inf] || 0) + 1;
             localStorage.setItem('erreursData', JSON.stringify(erreursData));
         }
-    }
-
-    function renderRevision() {
-        const container = document.getElementById('list-revision');
-        const search = document.getElementById('search').value.toLowerCase();
-        let list = verbes.filter(v => v.fr.toLowerCase().includes(search) || v.inf.toLowerCase().includes(search));
-        if(showHardOnly) list = list.filter(v => (erreursData[v.inf] || 0) >= 2);
-
-        container.innerHTML = list.map(v => {
-            const isFav = favoris.includes(v.inf);
-            return `
-                <div class="verb-item ${(erreursData[v.inf] || 0) >= 2 ? 'hard-verb' : ''}">
-                    <button class="btn-fav ${isFav ? 'is-fav' : ''}" onclick="toggleFav('${v.inf}')">⭐</button>
-                    <span>${v.fr}</span>
-                    <div class="verb-forms">
-                        <b>${v.inf}</b> / ${v.pre} / ${v.par}
-                    </div>
-                    <button class="audio-btn" onclick="speak('${v.inf}, ${v.pre}, ${v.par}')">🔊</button>
-                </div>
-            `;
-        }).join('');
-    }
-
-    function nextQuestion() {
-        let pool = verbes;
-        if(quizMode === 'hard') pool = verbes.filter(v => (erreursData[v.inf] || 0) >= 2);
-        if(quizMode === 'fav') pool = verbes.filter(v => favoris.includes(v.inf));
-        if(pool.length === 0) return document.getElementById('q-fr').innerText = "Liste vide";
-        
-        currentIdx = verbes.indexOf(pool[Math.floor(Math.random() * pool.length)]);
-        document.getElementById('q-fr').innerText = verbes[currentIdx].fr;
-        document.getElementById('q-inf').innerText = verbes[currentIdx].inf;
-        document.getElementById('input-pre').value = "";
-        document.getElementById('input-par').value = "";
-        document.getElementById('feedback').innerText = "";
     }
 
     function setQuizMode(m, b) {
@@ -250,10 +252,7 @@
     }
 
     function toggleShowHard() { showHardOnly = !showHardOnly; renderRevision(); }
-    function resetAll() { if(confirm("Effacer tout ?")) { localStorage.clear(); location.reload(); } }
-
     nextQuestion();
 </script>
-
 </body>
 </html>
