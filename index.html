@@ -3,47 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anglais Pro - Coaching Visuel</title>
+    <title>Anglais Master - 100 Verbes</title>
     <style>
-        :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; --warning: #f59e0b; --danger: #ef4444; --success: #22c55e; --fav: #ec4899; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; justify-content: center; }
+        :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; --danger: #ef4444; --success: #22c55e; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; justify-content: center; }
         .app-container { width: 100%; max-width: 600px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
-        
         .tabs { display: flex; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; }
         .tab { flex: 1; padding: 15px; border: none; background: none; cursor: pointer; font-weight: bold; color: #64748b; }
         .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: white; }
-
         .content { padding: 15px; display: none; }
         .content.active { display: block; }
-
-        /* Style des scores mis à jour */
-        .stats { display: flex; justify-content: center; gap: 30px; margin-bottom: 15px; font-weight: 800; font-size: 1.1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+        .stats { display: flex; justify-content: center; gap: 30px; margin-bottom: 15px; font-weight: 800; padding-bottom: 10px; }
         .stat-item { display: flex; flex-direction: column; align-items: center; }
-        .stat-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; margin-bottom: 2px; }
         #score { color: var(--success); font-size: 1.4rem; }
         #best { color: var(--danger); font-size: 1.4rem; }
-
-        .quiz-modes { display: flex; gap: 5px; margin-bottom: 15px; }
-        .mode-btn { flex: 1; font-size: 0.7rem; padding: 8px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; background: white; font-weight: bold; }
-        .mode-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-
-        .verb-card { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: center; border: 1px solid #e2e8f0; }
+        .verb-card { background: #f1f5f9; padding: 25px; border-radius: 15px; margin-bottom: 15px; text-align: center; }
         input[type="text"] { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-size: 1rem; }
         .btn-check { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
-
-        .speed-control { background: #f1f5f9; padding: 10px; border-radius: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 0.8rem; font-weight: bold; }
-        .speed-control input { flex: 1; accent-color: var(--primary); }
-
-        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
-        .btn-act { padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; font-size: 0.75rem; color: white; }
-        
-        .list-container { max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; }
-        .verb-item { display: grid; grid-template-columns: 35px 1fr 3fr 40px; padding: 12px 10px; border-bottom: 1px solid #f1f5f9; align-items: center; font-size: 0.85rem; }
-        .verb-forms { color: #475569; }
-        .verb-forms b { color: var(--primary); }
-        .btn-fav { background: none; border: none; cursor: pointer; font-size: 1.1rem; filter: grayscale(1); }
-        .btn-fav.is-fav { filter: grayscale(0); }
-        .audio-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; }
+        .list-container { max-height: 450px; overflow-y: auto; border-radius: 10px; }
+        .verb-item { display: grid; grid-template-columns: 1fr 2.5fr 40px; padding: 12px; border-bottom: 1px solid #f1f5f9; align-items: center; font-size: 0.85rem; }
+        .mastery-dot { font-size: 0.7rem; color: #94a3b8; }
         #feedback { text-align: center; margin-top: 10px; font-weight: bold; min-height: 45px; }
     </style>
 </head>
@@ -52,27 +31,14 @@
 <div class="app-container">
     <div class="tabs">
         <button class="tab active" onclick="openTab('quiz', this)">QUIZ</button>
-        <button class="tab" onclick="openTab('revision', this)">RÉVISION</button>
+        <button class="tab" onclick="openTab('revision', this)">LISTE DES 100</button>
     </div>
 
     <div id="quiz" class="content active">
-        <div class="quiz-modes">
-            <button class="mode-btn active" onclick="setQuizMode('all', this)">Tous</button>
-            <button class="mode-btn" onclick="setQuizMode('hard', this)">⚠️ Erreurs</button>
-            <button class="mode-btn" onclick="setQuizMode('fav', this)">⭐ Favoris</button>
-        </div>
-        
         <div class="stats">
-            <div class="stat-item">
-                <span class="stat-label">Score</span>
-                <span id="score">0</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">Record</span>
-                <span id="best">0</span>
-            </div>
+            <div class="stat-item"><span id="score">0</span></div>
+            <div class="stat-item"><span id="best">0</span></div>
         </div>
-
         <div class="verb-card">
             <h2 id="q-fr">-</h2>
             <p>Base : <strong id="q-inf">-</strong></p>
@@ -84,18 +50,7 @@
     </div>
 
     <div id="revision" class="content">
-        <div class="speed-control">
-            <span>🐢 Vitesse</span>
-            <input type="range" id="speedRange" min="0.3" max="1.3" step="0.1" value="0.8">
-            <span id="speedVal">0.8x</span>
-        </div>
-        <div class="action-btns">
-            <button class="btn-act" style="background: var(--primary)" onclick="playFullList(false)">Lecture 🔊</button>
-            <button class="btn-act" style="background: #8b5cf6" onclick="playFullList(true)">Aléatoire 🔀</button>
-            <button class="btn-act" style="background: var(--danger)" onclick="stopAudio()">STOP 🛑</button>
-            <button class="btn-act" style="background: var(--warning)" onclick="toggleShowHard()">Priorités ⚠️</button>
-        </div>
-        <input type="text" id="search" placeholder="Chercher un verbe..." onkeyup="renderRevision()">
+        <input type="text" id="search" placeholder="Rechercher un verbe..." onkeyup="renderRevision()">
         <div class="list-container" id="list-revision"></div>
     </div>
 </div>
@@ -121,57 +76,52 @@
         { fr: "Pardonner", inf: "forgive", pre: "forgave", par: "forgiven" }, { fr: "Geler", inf: "freeze", pre: "froze", par: "frozen" },
         { fr: "Obtenir", inf: "get", pre: "got", par: "got" }, { fr: "Donner", inf: "give", pre: "gave", par: "given" },
         { fr: "Aller", inf: "go", pre: "went", par: "gone" }, { fr: "Grandir", inf: "grow", pre: "grew", par: "grown" },
-        { fr: "Avoir", inf: "have", pre: "had", par: "had" }, { fr: "Entendre", inf: "hear", pre: "heard", par: "heard" },
-        { fr: "Cacher", inf: "hide", pre: "hid", par: "hidden" }, { fr: "Frapper", inf: "hit", pre: "hit", par: "hit" },
-        { fr: "Tenir", inf: "hold", pre: "held", par: "held" }, { fr: "Blesser", inf: "hurt", pre: "hurt", par: "hurt" },
-        { fr: "Garder", inf: "keep", pre: "kept", par: "kept" }, { fr: "Savoir", inf: "know", pre: "knew", par: "known" },
-        { fr: "Apprendre", inf: "learn", pre: "learnt", par: "learnt" }, { fr: "Quitter", inf: "leave", pre: "left", par: "left" },
-        { fr: "Prêter", inf: "lend", pre: "lent", par: "lent" }, { fr: "Laisser", inf: "let", pre: "let", par: "let" },
-        { fr: "Perdre", inf: "lose", pre: "lost", par: "lost" }, { fr: "Fabriquer", inf: "make", pre: "made", par: "made" },
-        { fr: "Signifier", inf: "mean", pre: "meant", par: "meant" }, { fr: "Rencontrer", inf: "meet", pre: "met", par: "met" },
-        { fr: "Payer", inf: "pay", pre: "paid", par: "paid" }, { fr: "Mettre", inf: "put", pre: "put", par: "put" },
-        { fr: "Lire", inf: "read", pre: "read", par: "read" }, { fr: "Monter", inf: "ride", pre: "rode", par: "ridden" },
-        { fr: "Sonner", inf: "ring", pre: "rang", par: "rung" }, { fr: "Courir", inf: "run", pre: "ran", par: "run" },
-        { fr: "Dire", inf: "say", pre: "said", par: "said" }, { fr: "Voir", inf: "see", pre: "saw", par: "seen" },
-        { fr: "Vendre", inf: "sell", pre: "sold", par: "sold" }, { fr: "Envoyer", inf: "send", pre: "sent", par: "sent" },
-        { fr: "Secouer", inf: "shake", pre: "shook", par: "shaken" }, { fr: "Montrer", inf: "show", pre: "showed", par: "shown" },
+        { fr: "Accrocher", inf: "hang", pre: "hung", par: "hung" }, { fr: "Avoir", inf: "have", pre: "had", par: "had" },
+        { fr: "Entendre", inf: "hear", pre: "heard", par: "heard" }, { fr: "Cacher", inf: "hide", pre: "hid", par: "hidden" },
+        { fr: "Frapper", inf: "hit", pre: "hit", par: "hit" }, { fr: "Tenir", inf: "hold", pre: "held", par: "held" },
+        { fr: "Blesser", inf: "hurt", pre: "hurt", par: "hurt" }, { fr: "Garder", inf: "keep", pre: "kept", par: "kept" },
+        { fr: "Savoir", inf: "know", pre: "knew", par: "known" }, { fr: "Poser", inf: "lay", pre: "laid", par: "laid" },
+        { fr: "Mener", inf: "lead", pre: "led", par: "led" }, { fr: "Apprendre", inf: "learn", pre: "learnt", par: "learnt" },
+        { fr: "Quitter", inf: "leave", pre: "left", par: "left" }, { fr: "Prêter", inf: "lend", pre: "lent", par: "lent" },
+        { fr: "Laisser", inf: "let", pre: "let", par: "let" }, { fr: "Perdre", inf: "lose", pre: "lost", par: "lost" },
+        { fr: "Fabriquer", inf: "make", pre: "made", par: "made" }, { fr: "Signifier", inf: "mean", pre: "meant", par: "meant" },
+        { fr: "Rencontrer", inf: "meet", pre: "met", par: "met" }, { fr: "Payer", inf: "pay", pre: "paid", par: "paid" },
+        { fr: "Mettre", inf: "put", pre: "put", par: "put" }, { fr: "Lire", inf: "read", pre: "read", par: "read" },
+        { fr: "Monter", inf: "ride", pre: "rode", par: "ridden" }, { fr: "Sonner", inf: "ring", pre: "rang", par: "rung" },
+        { fr: "Courir", inf: "run", pre: "ran", par: "run" }, { fr: "Dire", inf: "say", pre: "said", par: "said" },
+        { fr: "Voir", inf: "see", pre: "saw", par: "seen" }, { fr: "Vendre", inf: "sell", pre: "sold", par: "sold" },
+        { fr: "Envoyer", inf: "send", pre: "sent", par: "sent" }, { fr: "Régler", inf: "set", pre: "set", par: "set" },
+        { fr: "Secouer", inf: "shake", pre: "shook", par: "shaken" }, { fr: "Briller", inf: "shine", pre: "shone", par: "shone" },
+        { fr: "Tirer", inf: "shoot", pre: "shot", par: "shot" }, { fr: "Montrer", inf: "show", pre: "showed", par: "shown" },
         { fr: "Fermer", inf: "shut", pre: "shut", par: "shut" }, { fr: "Chanter", inf: "sing", pre: "sang", par: "sung" },
         { fr: "S'asseoir", inf: "sit", pre: "sat", par: "sat" }, { fr: "Dormir", inf: "sleep", pre: "slept", par: "slept" },
-        { fr: "Parler", inf: "speak", pre: "spoke", par: "spoken" }, { fr: "Dépenser", inf: "spend", pre: "spent", par: "spent" },
-        { fr: "Se tenir", inf: "stand", pre: "stood", par: "stood" }, { fr: "Voler", inf: "steal", pre: "stole", par: "stolen" },
+        { fr: "Glisser", inf: "slide", pre: "slid", par: "slid" }, { fr: "Parler", inf: "speak", pre: "spoke", par: "spoken" },
+        { fr: "Dépenser", inf: "spend", pre: "spent", par: "spent" }, { fr: "Se tenir", inf: "stand", pre: "stood", par: "stood" },
+        { fr: "Voler", inf: "steal", pre: "stole", par: "stolen" }, { fr: "Coller", inf: "stick", pre: "stuck", par: "stuck" },
         { fr: "Nager", inf: "swim", pre: "swam", par: "swum" }, { fr: "Prendre", inf: "take", pre: "took", par: "taken" },
-        { fr: "Enseigner", inf: "teach", pre: "taught", par: "taught" }, { fr: "Raconter", inf: "tell", pre: "told", par: "told" },
-        { fr: "Penser", inf: "think", pre: "thought", par: "thought" }, { fr: "Comprendre", inf: "understand", pre: "understood", par: "understood" },
+        { fr: "Enseigner", inf: "teach", pre: "taught", par: "taught" }, { fr: "Déchirer", inf: "tear", pre: "tore", par: "torn" },
+        { fr: "Raconter", inf: "tell", pre: "told", par: "told" }, { fr: "Penser", inf: "think", pre: "thought", par: "thought" },
+        { fr: "Lancer", inf: "throw", pre: "threw", par: "thrown" }, { fr: "Comprendre", inf: "understand", pre: "understood", par: "understood" },
         { fr: "Réveiller", inf: "wake", pre: "woke", par: "woken" }, { fr: "Porter", inf: "wear", pre: "wore", par: "worn" },
         { fr: "Gagner", inf: "win", pre: "won", par: "won" }, { fr: "Écrire", inf: "write", pre: "wrote", par: "written" }
     ];
 
-    let currentIdx = 0, score = 0, quizMode = 'all', showHardOnly = false, isPlaying = false;
-    let erreursData = JSON.parse(localStorage.getItem('erreursData')) || {};
-    let favoris = JSON.parse(localStorage.getItem('favoris')) || [];
-    let bestScore = localStorage.getItem('bestScore') || 0;
+    let currentIdx = 0, score = 0;
+    let mastery = JSON.parse(localStorage.getItem('masteryData')) || {}; 
+    let best = localStorage.getItem('bestScore') || 0;
 
-    document.getElementById('best').innerText = bestScore;
-    const range = document.getElementById('speedRange');
-    range.oninput = () => document.getElementById('speedVal').innerText = range.value + "x";
+    document.getElementById('best').innerText = best;
 
-    function stopAudio() { isPlaying = false; window.speechSynthesis.cancel(); }
-
-    function speakDual(frText, enText, callback) {
+    function speakDual(frText, enText) {
         window.speechSynthesis.cancel();
-        const msgFr = new SpeechSynthesisUtterance(frText);
-        msgFr.lang = 'fr-FR';
-        msgFr.onend = () => {
-            if (!isPlaying) return;
-            setTimeout(() => {
-                const msgEn = new SpeechSynthesisUtterance(enText);
-                msgEn.lang = 'en-US';
-                msgEn.rate = parseFloat(range.value);
-                msgEn.onend = () => { if (callback && isPlaying) callback(); };
-                window.speechSynthesis.speak(msgEn);
-            }, 400);
+        const mFr = new SpeechSynthesisUtterance(frText);
+        mFr.lang = 'fr-FR';
+        mFr.onend = () => {
+            const mEn = new SpeechSynthesisUtterance(enText);
+            mEn.lang = 'en-US';
+            window.speechSynthesis.speak(mEn);
         };
-        window.speechSynthesis.speak(msgFr);
+        window.speechSynthesis.speak(mFr);
     }
 
     function checkAnswer() {
@@ -179,34 +129,36 @@
         const pp = document.getElementById('input-par').value.toLowerCase().trim();
         const v = verbes[currentIdx];
         const fb = document.getElementById('feedback');
+        
         if (p === v.pre && pp === v.par) {
-            score++; updateScore();
+            score++;
             fb.innerHTML = "<span style='color:var(--success)'>✅ Correct !</span>";
-            isPlaying = true; speakDual("Correct", `${v.inf}, ${v.pre}, ${v.par}`);
-            if (erreursData[v.inf] > 0) { erreursData[v.inf]--; localStorage.setItem('erreursData', JSON.stringify(erreursData)); }
-            setTimeout(nextQuestion, 1500);
+            mastery[v.inf] = Math.min((mastery[v.inf] || 0) + 1, 7);
+            localStorage.setItem('masteryData', JSON.stringify(mastery));
+            speakDual("Correct", `${v.inf}, ${v.pre}, ${v.par}`);
+            setTimeout(nextQuestion, 1200);
         } else {
-            score = 0; updateScore();
-            fb.innerHTML = `<span style='color:var(--danger)'>❌ Erreur : <br> ${v.pre} | ${v.par}</span>`;
-            erreursData[v.inf] = (erreursData[v.inf] || 0) + 1;
-            localStorage.setItem('erreursData', JSON.stringify(erreursData));
+            score = 0;
+            fb.innerHTML = `<span style='color:var(--danger)'>${v.pre} | ${v.par}</span>`;
+            mastery[v.inf] = -1; 
+            localStorage.setItem('masteryData', JSON.stringify(mastery));
         }
+        updateScore();
     }
 
     function nextQuestion() {
-        let pool = verbes;
-        if(quizMode === 'hard') pool = verbes.filter(v => (erreursData[v.inf] || 0) >= 2);
-        if(quizMode === 'fav') pool = verbes.filter(v => favoris.includes(v.inf));
-        if(pool.length === 0) {
-            document.getElementById('q-fr').innerText = "Liste vide";
-            document.getElementById('q-inf').innerText = "Changez de mode";
-            return;
-        }
+        const scores = verbes.map(v => mastery[v.inf] || 0);
+        const minScore = Math.min(...scores);
+        let pool = verbes.filter(v => (mastery[v.inf] || 0) === minScore);
+        if (minScore === 7) pool = verbes;
+
         const randomVerb = pool[Math.floor(Math.random() * pool.length)];
         currentIdx = verbes.indexOf(randomVerb);
+        
         document.getElementById('q-fr').innerText = randomVerb.fr;
         document.getElementById('q-inf').innerText = randomVerb.inf;
-        document.getElementById('input-pre').value = ""; document.getElementById('input-par').value = "";
+        document.getElementById('input-pre').value = ""; 
+        document.getElementById('input-par').value = "";
         document.getElementById('feedback').innerText = "";
     }
 
@@ -214,38 +166,25 @@
         const container = document.getElementById('list-revision');
         const search = document.getElementById('search').value.toLowerCase();
         let list = verbes.filter(v => v.fr.toLowerCase().includes(search) || v.inf.toLowerCase().includes(search));
-        if(showHardOnly) list = list.filter(v => (erreursData[v.inf] || 0) >= 2);
 
-        container.innerHTML = list.map(v => `
-            <div class="verb-item ${(erreursData[v.inf] || 0) >= 2 ? 'hard-verb' : ''}">
-                <button class="btn-fav ${favoris.includes(v.inf)?'is-fav':''}" onclick="toggleFav('${v.inf}')">⭐</button>
-                <span>${v.fr}</span>
-                <div class="verb-forms"><b>${v.inf}</b> / ${v.pre} / ${v.par}</div>
-                <button class="audio-btn" onclick="isPlaying=true; speakDual('${v.fr}', '${v.inf}, ${v.pre}, ${v.par}')">🔊</button>
-            </div>
-        `).join('');
+        container.innerHTML = list.map(v => {
+            const m = mastery[v.inf] || 0;
+            return `
+                <div class="verb-item">
+                    <span>${v.fr}<br><small class="mastery-dot">${m}/7</small></span>
+                    <div><b>${v.inf}</b> / ${v.pre} / ${v.par}</div>
+                    <button style="border:none; background:none; cursor:pointer; font-size:1.2rem" onclick="speakDual('${v.fr}', '${v.inf} ${v.pre} ${v.par}')">🔊</button>
+                </div>
+            `;
+        }).join('');
     }
 
-    function playFullList(shuffle) {
-        isPlaying = true;
-        let list = [...verbes];
-        const search = document.getElementById('search').value.toLowerCase();
-        if(search) list = list.filter(v => v.fr.toLowerCase().includes(search));
-        if(showHardOnly) list = list.filter(v => (erreursData[v.inf] || 0) >= 2);
-        if(shuffle) list.sort(() => Math.random() - 0.5);
-        let i = 0;
-        function playStep() {
-            if(i < list.length && isPlaying) {
-                speakDual(list[i].fr, `${list[i].inf}, ${list[i].pre}, ${list[i].par}`, () => {
-                    i++; setTimeout(playStep, 1000);
-                });
-            } else { isPlaying = false; }
-        }
-        playStep();
+    function updateScore() {
+        document.getElementById('score').innerText = score;
+        if (score > best) { best = score; localStorage.setItem('bestScore', best); document.getElementById('best').innerText = best; }
     }
 
     function openTab(tabId, el) {
-        stopAudio();
         document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
@@ -253,21 +192,7 @@
         if(tabId === 'revision') renderRevision();
     }
 
-    function setQuizMode(m, b) { quizMode = m; document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active')); b.classList.add('active'); nextQuestion(); }
-    function toggleShowHard() { showHardOnly = !showHardOnly; renderRevision(); }
-    function toggleFav(inf) {
-        if(favoris.includes(inf)) favoris = favoris.filter(f => f !== inf);
-        else favoris.push(inf);
-        localStorage.setItem('favoris', JSON.stringify(favoris));
-        renderRevision();
-    }
-    function updateScore() {
-        document.getElementById('score').innerText = score;
-        if (score > bestScore) { bestScore = score; localStorage.setItem('bestScore', bestScore); document.getElementById('best').innerText = bestScore; }
-    }
-
     nextQuestion();
-    renderRevision();
 </script>
 </body>
 </html>
